@@ -6,9 +6,8 @@ from . views import AssetDetailsViewSet
 
 router = routers.DefaultRouter()
 router.register(r'asset_details', AssetDetailsViewSet, basename='asset_details')
-urlpatterns = router.urls
+# urlpatterns = router.urls
 
-urlpatterns += [
-    path('asset_data/', AssetDetailsViewSet),
+urlpatterns = [
     path('', include(router.urls)),
 ]
