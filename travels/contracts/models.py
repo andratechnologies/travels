@@ -28,7 +28,7 @@ class Contract(consoleModels.SoftDeletionModel):
     start_date = models.DateField(blank=True, null=True)
     end_date = models.DateField(blank=True, null=True)
     rental_amount = models.FloatField(blank=True, null=True)
-    asset = models.ForeignKey(consoleModels.TrAssets, on_delete=models.CASCADE)
+    asset = models.ForeignKey(consoleModels.TrAssets, on_delete=models.CASCADE, related_name="contract_asset")
 
     class Meta:
         app_label = 'contracts'
@@ -46,7 +46,7 @@ class Invoice(consoleModels.SoftDeletionModel):
     invoice_month = models.DateField()
     Due_date = models.DateField()
     invoice_amount = models.FloatField(blank=True, null=True)
-    contract = models.ForeignKey(Contract, on_delete=models.CASCADE)
+    contract = models.ForeignKey(Contract, on_delete=models.CASCADE, related_name="contract_invoice")
 
     class Meta:
         app_label = 'contracts'
@@ -60,7 +60,7 @@ class Invoice(consoleModels.SoftDeletionModel):
 
 
 class Maintainance(consoleModels.SoftDeletionModel):
-    contract = models.ForeignKey(Contract, on_delete=models.CASCADE)
+    contract = models.ForeignKey(Contract, on_delete=models.CASCADE, related_name="contract_maintainance")
     monthly_rate = models.FloatField()
     max_km = models.IntegerField(blank=True, null=True)
 

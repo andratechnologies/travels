@@ -69,13 +69,15 @@ class TrConstants(SoftDeletionModel):
         return self.constant_type
 
 class TrAssets(SoftDeletionModel):
-    asset_type = models.CharField(max_length=25)
+    asset_type = models.IntegerField()
     asset_number = models.CharField(max_length=15)
     asset_model = models.IntegerField(blank=True, null=True)
     asset_value = models.IntegerField(default=100000, blank=True, null=True)
     model_expiry = models.DateField(blank=True, null=True)
     image = models.ImageField(upload_to='media/asset_image', blank=True, null=True)
     insurance_expiry_date = models.DateField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True, blank=True, null=True)
 
 
     class Meta:
