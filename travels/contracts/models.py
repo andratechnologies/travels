@@ -10,6 +10,8 @@ class Contractor(consoleModels.SoftDeletionModel):
     contact_number = models.IntegerField(blank=True, null=True)
     email = models.EmailField()
     address = models.TextField(max_length=350)
+    created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True, blank=True, null=True)
 
     class Meta:
         app_label = 'contracts'
@@ -29,6 +31,8 @@ class Contract(consoleModels.SoftDeletionModel):
     end_date = models.DateField(blank=True, null=True)
     rental_amount = models.FloatField(blank=True, null=True)
     asset = models.ForeignKey(consoleModels.TrAssets, on_delete=models.CASCADE, related_name="contract_asset")
+    created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True, blank=True, null=True)
 
     class Meta:
         app_label = 'contracts'
@@ -43,10 +47,12 @@ class Contract(consoleModels.SoftDeletionModel):
 class Invoice(consoleModels.SoftDeletionModel):
     slug = RandomCharField(length=6, include_digits=False, unique=True)
     invoice_date = models.DateField(auto_now_add=True, blank=True, null=True)
-    invoice_month = models.DateField()
+    invoice_month = models.CharField(max_length=10,blank=True, null=True)
     Due_date = models.DateField()
     invoice_amount = models.FloatField(blank=True, null=True)
     contract = models.ForeignKey(Contract, on_delete=models.CASCADE, related_name="contract_invoice")
+    created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True, blank=True, null=True)
 
     class Meta:
         app_label = 'contracts'
@@ -63,6 +69,8 @@ class Maintainance(consoleModels.SoftDeletionModel):
     contract = models.ForeignKey(Contract, on_delete=models.CASCADE, related_name="contract_maintainance")
     monthly_rate = models.FloatField()
     max_km = models.IntegerField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True, blank=True, null=True)
 
 
     class Meta:
@@ -73,13 +81,6 @@ class Maintainance(consoleModels.SoftDeletionModel):
 
     def __str__(self):
         return self.monthly_rate
-
-
-
-
-
-
-
 
 
 

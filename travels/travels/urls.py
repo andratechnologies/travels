@@ -24,7 +24,7 @@ router = routers.DefaultRouter()
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('console/', include('consolole.urls')),
-    # path('contracts/', include('contracts.urls')),
+    path('contracts/', include('contracts.urls')),
 
 ]
 
