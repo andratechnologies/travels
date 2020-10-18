@@ -8,6 +8,27 @@ from travels import constants
 from consolole import validation
 
 
+def check_contract(request_function):
+
+    def wrap(request, *args, **kwargs):
+        contract = Contract.objects.filter(slug=kwargs['contract_slug']).first()
+        if contract:
+            request.kwargs['contract'] = contract
+            return request_function(request, *args, **kwargs)
+        else:
+            response = {}
+            response['data'] = {}
+            if request.action == "list":
+                response['data'] = []
+            response['statusCode'] = constants.INVALID_STATUS_CODE
+            response['status'] = constants.FAIL_STATUS
+            response['message'] = "Required Contract Invalid or Missing!"
+            return Response(response)
+
+    return wrap
+
+
+
 class ContractorViewSet(viewsets.ModelViewSet):
     serializer_class = ContractorSerializer
     queryset = Contractor.objects.all()
@@ -119,8 +140,10 @@ class InvoiceViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
             queryset = Invoice.objects.all()
 
+    @check_contract
     def create(self, request, *args, **kwargs):
         response = {}
+        request.data['contract'] = self.kwargs['contract'].id
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             self.perform_create(serializer)
@@ -136,7 +159,7 @@ class InvoiceViewSet(viewsets.ModelViewSet):
 
         return Response(response)
 
-
+    # @check_contract
     def list(self, request, *args, **kwargs):
         response = {}
         response['data'] = {}
@@ -156,10 +179,11 @@ class InvoiceViewSet(viewsets.ModelViewSet):
 
         return Response(response)
 
-
+    # @check_contract
     def retrieve(self, request, *args, **kwargs):
         response = {}
         response['data'] = {}
+        # request.data['contract'] = self.kwargs['contract'].id
         if Invoice.objects.filter(id=self.kwargs['pk']).exists():
             instance = self.get_object()
             serializer = self.get_serializer(instance)
@@ -173,9 +197,11 @@ class InvoiceViewSet(viewsets.ModelViewSet):
             response['message'] = "Requested Invoice Details are not valid"
         return Response(response)
 
+    @check_contract
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', True)
         response = {}
+        request.data['contract'] = self.kwargs['contract'].id
         response['data'] = {}
         if Invoice.objects.filter(id=self.kwargs['pk']).exists():
             instance = self.get_object()
@@ -193,9 +219,10 @@ class InvoiceViewSet(viewsets.ModelViewSet):
                 response['message'] = validation.error_message(serializer).data["message"]
         return Response(response)
 
-
+    # @check_contract
     def destroy(self, request, *args, **kwargs):
         response = {}
+        # request.data['contract'] = self.kwargs['contract'].id
         if Invoice.objects.filter(id=self.kwargs['pk']).exists():
             instance = self.get_object()
             self.perform_destroy(instance)
@@ -209,6 +236,7 @@ class InvoiceViewSet(viewsets.ModelViewSet):
             response['status'] = constants.FAIL_STATUS
             response['message'] = "Requested Invoice Details is not valid"
         return Response(response)
+
 
 class MaintainanceViewSet(viewsets.ModelViewSet):
     serializer_class = MaintainanceSerializer

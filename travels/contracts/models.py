@@ -83,5 +83,20 @@ class Maintainance(consoleModels.SoftDeletionModel):
         return self.monthly_rate
 
 
+class Payment(consoleModels.SoftDeletionModel):
+    slug = RandomCharField(length=6, include_digits=False, unique=True)
+    invoice = models.ForeignKey(Invoice, on_delete=models.CASCADE, related_name="payment_invoice")
+    due_status = models.BooleanField(default=True)
+    status = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True, blank=True, null=True)
 
+    class Meta:
+        app_label = 'contracts'
+        db_table = 'tr_payment'
+        verbose_name = 'Payment'
+        verbose_name_plural = 'Payment'
+
+    def __str__(self):
+        return self.status
 

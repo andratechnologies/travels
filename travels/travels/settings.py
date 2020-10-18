@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
+import datetime
+from celery.schedules import crontab
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -40,6 +42,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'consolole',
     'contracts',
+    # 'django_celery_results',
+    'django_celery_beat',
 ]
 
 MIDDLEWARE = [
@@ -125,3 +129,37 @@ STATIC_URL = '/static/'
 MEDIA_URLS = '/media/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR,'media')
+
+# CACHES = {
+#     'default': {
+#         'BACKEND': 'django_redis.cache.RedisCache',
+#         'LOCATION': 'redis://localhost:6379/4',
+#         'OPTIONS': {
+#             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+#         }
+#     }
+# }
+CELERY_BROKER_URL = 'redis://localhost:6379/4'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/4'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = TIME_ZONE
+CELERY_IMPORTS = "console.tasks"
+CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
+
+CELERY_BEAT_SCHEDULE = {
+        # Executes for every 5 minutes on mon,tue,wed,thu,fri,sat
+        'add-every-day-evening': {
+            'task': 'consolole.tasks.payment_due',
+            'schedule': crontab(minute='30', hour='4'),
+        },
+        'invoice-generation-reminder': {
+            'task': 'consolole.tasks.invoice_generation_mail_notify',
+            'schedule': crontab(minute='30', hour='4'),
+        },
+        'payment-reminder': {
+            'task': 'consolole.tasks.payment_mail_notify',
+            'schedule': crontab(minute='30', hour='4'),
+        }
+    }
